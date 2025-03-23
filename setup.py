@@ -10,6 +10,9 @@ setup(
         "numpy",
         "matplotlib",
         "pytest",
+        "pandas",
+        "tqdm",
+        "jupyter"
     ],
     python_requires=">=3.6",
 ) 

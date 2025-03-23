@@ -1,4 +1,4 @@
-## isd simulator
+# Information Set Decoding (ISD) Simulator
 
 A Python library for simulating and comparing classical Information Set Decoding (ISD) algorithms for decoding random linear codes.
 
@@ -12,7 +12,9 @@ The library includes:
 - Implementation of classical ISD algorithms:
   - Prange's algorithm
   - Stern's algorithm
+  - BKW algorithm (simplified)
 - Utilities for running experiments and comparing algorithm performance
+- Advanced visualization and analysis tools
 
 ## Results
 
@@ -67,6 +69,7 @@ import numpy as np
 from isd_lib.core.linear_code import LinearCode
 from isd_lib.algorithms.prange import PrangeISD
 from isd_lib.algorithms.stern import SternISD
+from isd_lib.algorithms.bkw import BKWISD
 
 # Create a linear code
 n, k = 20, 10
@@ -87,6 +90,10 @@ e_prange, success_prange, iterations_prange = prange.decode(code.H, s, 2)
 # Decode with Stern's algorithm
 stern = SternISD(max_iterations=100, p=1, l=0)
 e_stern, success_stern, iterations_stern = stern.decode(code.H, s, 2)
+
+# Decode with BKW algorithm
+bkw = BKWISD(max_iterations=100, num_blocks=2)
+e_bkw, success_bkw, iterations_bkw = bkw.decode(code.H, s, 2)
 ```
 
 ### Running Experiments
@@ -99,9 +106,10 @@ from isd_lib.utils.experiment import Experiment
 # Create algorithms
 prange = PrangeISD(max_iterations=1000)
 stern = SternISD(max_iterations=100, p=2, l=4)
+bkw = BKWISD(max_iterations=100, num_blocks=2)
 
-# Create an experiment with the algorithms
-experiment = Experiment([prange, stern])
+# Create an experiment with all algorithms
+experiment = Experiment([prange, stern, bkw])
 
 # Run the experiment
 n, k, t = 24, 12, 2
@@ -118,6 +126,8 @@ fig, axes = experiment.plot_summary()
 See the `examples` directory for complete examples:
 
 - `isd_comparison.py`: Compare Prange's and Stern's algorithms on random instances
+- `three_algorithm_comparison.py`: Compare all three algorithms with detailed analysis
+- `isd_advanced_usage.ipynb`: Jupyter notebook with advanced usage and analysis
 
 ## ISD Algorithms
 
@@ -139,10 +149,19 @@ Stern's algorithm improves on Prange's by using a meet-in-the-middle approach:
 5. Looking for matches that result in a syndrome match
 6. Constructing and checking candidate error vectors
 
+### BKW Algorithm
+
+BKW (Blum-Kalai-Wasserman) is another approach for solving the syndrome decoding problem:
+1. Transforms the parity-check matrix into a convenient form
+2. Splits columns into blocks
+3. Uses a collision-finding approach based on the birthday paradox
+4. Reconstructs candidate error vectors from the found collisions
+
 ## References
 
 - Prange, E. (1962). The use of information sets in decoding cyclic codes. IRE Transactions on Information Theory, 8(5), 5-9.
 - Stern, J. (1989). A method for finding codewords of small weight. In Coding Theory and Applications (pp. 106-113). Springer.
+- Blum, A., Kalai, A., & Wasserman, H. (2003). Noise-tolerant learning, the parity problem, and the statistical query model. Journal of the ACM, 50(4), 506-519.
 
 ## License
 
