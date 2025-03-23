@@ -14,12 +14,21 @@ The library includes:
   - Stern's algorithm
 - Utilities for running experiments and comparing algorithm performance
 
+## Results
+
+![Algorithm Comparison Results](publish.png)
+
+The chart above shows the performance comparison between Prange's algorithm and Stern's algorithm:
+- **Left**: Success rate comparison (PrangeISD: 100%, SternISD: 50%)
+- **Middle**: Average time comparison for successful trials (PrangeISD is faster)
+- **Right**: Average iterations comparison for successful trials (PrangeISD requires fewer iterations)
+
 ## Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/pythonomar22/isd-lib.git
-cd isd-lib
+git clone https://github.com/pythonomar22/quantum.git
+cd quantum
 
 # Install using pip
 pip install -e .
