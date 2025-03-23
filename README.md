@@ -23,6 +23,15 @@ The chart above shows the performance comparison between Prange's algorithm and 
 - **Middle**: Average time comparison for successful trials (PrangeISD is faster)
 - **Right**: Average iterations comparison for successful trials (PrangeISD requires fewer iterations)
 
+## Research Paper and Presentation
+
+This project includes detailed research on Information Set Decoding algorithms and their implementation:
+
+- [Paper](finalpapercs250.pdf)
+- [Presentation](finalprescs250.pdf)
+
+These documents provide in-depth analysis of the algorithms' performance, theoretical foundations, and implementation details.
+
 ## Installation
 
 ```bash
