@@ -1,0 +1,255 @@
+Okay, here's a detailed guide and technical overview for a software engineer to create a Python library for simulating classical ISD algorithms. This guide focuses on the concepts, algorithms, and design considerations, without providing specific code. The goal is to give the engineer a strong understanding so they can implement it effectively and even make their own design choices where appropriate.
+
+Project Title: Classical Information Set Decoding (ISD) Simulator
+
+Project Goal: To develop a Python library that implements and compares different classical Information Set Decoding (ISD) algorithms for decoding random linear codes. This library should be well-documented, easily extensible, and allow for performance analysis of the implemented algorithms.
+
+Target Audience: Primarily, students and researchers interested in code-based cryptography, specifically those studying decoding algorithms and their complexity. The library should also be accessible to software engineers with a basic understanding of linear algebra and probability.
+
+1. Introduction and Motivation (for the Engineer's Understanding)
+
+Context: Explain the role of error-correcting codes in data transmission and storage. Briefly introduce the threat of quantum computers (Shor's algorithm) to traditional cryptography (RSA, ECC). This motivates the need for post-quantum cryptography (PQC).
+
+Code-Based Cryptography: Explain that code-based cryptography (e.g., the McEliece cryptosystem) is a promising PQC candidate. Its security relies on the hardness of the Syndrome Decoding Problem (SDP). This project will focus on algorithms that try to solve SDP (i.e., attack the cryptosystem), allowing us to understand its difficulty.
+
+Why Classical ISD? Even though quantum algorithms exist, classical ISD algorithms are:
+
+The best known attacks against code-based cryptography (before quantum computers become practical). Understanding their limitations is crucial for parameter selection in cryptosystems.
+
+A foundation for understanding more advanced quantum algorithms (like quantum sieving), which often build upon classical ISD techniques.
+
+Relatively easy to implement and experiment with, providing a good learning experience.
+
+2. Mathematical Background (Essential Concepts)
+
+The engineer must understand these concepts to implement the algorithms correctly. Provide clear definitions and examples (using small matrices/vectors). Use consistent notation throughout.
+
+Finite Fields (GF(2)): Explain that we're working with binary codes (bits: 0 and 1). All operations are modulo 2 (XOR for addition, AND for multiplication).
+
+Linear Codes:
+
+Define a linear code as a subspace of 
+F
+2
+n
+F 
+2
+n
+​
+ 
+.
+
+Define the parameters:
+
+n: code length (number of bits in a codeword)
+
+k: code dimension (number of bits in the original message)
+
+d: minimum distance (minimum Hamming distance between any two distinct codewords). Relate this to error-correction capability: a code with minimum distance d can correct up to t = floor((d-1)/2) errors.
+
+Explain the concept of a generator matrix G (size k x n) and a parity-check matrix H (size (n-k) x n). Explain the relationship: c is a codeword if and only if H c^T = 0. Emphasize that G is used for encoding, and H is used for decoding (and in the syndrome calculation).
+
+Syndrome Decoding Problem (SDP):
+
+Formally define the SDP: Given H, a syndrome s (a vector of length n-k), and an error weight t, find an error vector e (of length n) such that He^T = s and the Hamming weight of e (number of 1s) is at most t.
+
+Explain that SDP is NP-hard in general, making it a good basis for cryptography.
+
+Clearly distinguish between the codeword c, the received word y = c + e, and the error vector e.
+
+Hamming Weight and Distance: Define these clearly, with examples.
+
+Information Set: Define an information set as a set of k linearly independent columns of the generator matrix G (or, equivalently, columns of the parity-check matrix H that can be put into a suitable form).
+
+Systematic Form: Explain that a generator matrix can be put into systematic form G = [I_k | P], where I_k is the k x k identity matrix. The corresponding parity-check matrix is then H = [-P^T | I_{n-k}]. Working in systematic form simplifies some of the ISD steps.
+
+3. Algorithms to Implement
+
+For each algorithm, provide a detailed, step-by-step description. Use clear pseudocode (not Python, but a language-agnostic description). Explain the intuition behind each step. Analyze the theoretical complexity (time and memory) in terms of n, k, and w (the weight of the error vector).
+
+3.1 Prange's Algorithm:
+
+Input: Parity-check matrix H, syndrome s, target error weight t.
+
+Output: Error vector e (or failure).
+
+Steps:
+
+Repeat until a solution is found (or a maximum number of iterations is reached):
+
+Randomly select a set of k columns of H to form an information set I.
+
+Try to put the submatrix H_I corresponding to I into an invertible form (e.g., using Gaussian elimination). If this fails, go back to step 1.
+
+Calculate s_I = H_I^{-1} s.
+
+Construct a candidate error vector e' : e'_I = s_I (the k bits corresponding to the information set) and e'_{n-k} = 0 (the remaining n-k bits are set to zero).
+
+Calculate the weight of e'.
+
+If wt(e') <= t, return e' as the solution.
+
+else go back to the 1st step of the repition.
+
+Complexity Analysis: Explain that the probability of success in each iteration is roughly (n choose k) / (n choose w). Therefore, the expected number of iterations is the inverse of this. Explain the (simplified) exponential complexity.
+
+Intuition: Prange's algorithm is essentially a "guess and check" approach. It hopes to guess the k error-free positions correctly.
+
+3.2 Stern's Algorithm (Simplified):
+
+Input: Parity-check matrix H, syndrome s, target error weight t, and parameters p and l.
+
+Output: Error vector e (or failure).
+
+Steps (Simplified):
+
+Repeat until a solution is found (or a maximum number of iterations is reached):
+
+Randomly select a set of k+l columns of H.
+
+Transform h to be in systematic form.
+
+Generate the 2 sets.
+
+Solve.
+
+Complexity Analysis: Explain the time and memory complexity, and how it depends on p and l. Explain the trade-off. Don't derive the full complexity (it's quite involved), but cite the original Stern paper and other analyses.
+
+Intuition: Stern's algorithm improves on Prange by splitting the error vector into two parts and using a meet-in-the-middle approach (birthday paradox). It's like searching for a needle in a haystack by dividing the haystack in half and looking for matching halves.
+
+3.3 (Optional) Dumer's or BJMM (Simplified):
+
+If the engineer is ambitious, you could include a simplified version of Dumer's or (more likely) a simplified BJMM. However, these are significantly more complex. Focus on the high-level ideas (recursive splitting, multiple representations) rather than every detail.
+
+Clearly state that this is a simplified version and that the full algorithms are much more intricate.
+
+4. Library Design and Functionality
+
+Modularity: Design the library with separate modules for:
+
+Linear code operations (matrix generation, encoding, syndrome calculation, Hamming weight, etc.).
+
+ISD algorithms (Prange, Stern, etc. – each in its own module or class).
+
+Performance evaluation (functions to run experiments and collect statistics).
+
+(Optional) Visualization (e.g., plotting success rate vs. parameters).
+
+Classes and Functions:
+
+LinearCode class: Should represent a linear code. Methods for:
+
+Generating a random code (given n, k).
+
+Getting the generator matrix G (possibly in systematic form).
+
+Getting the parity-check matrix H.
+
+Encoding a message.
+
+Calculating the syndrome of a vector.
+
+ISDAlgorithm (abstract) base class:
+
+decode(H, s, t) method (to be implemented by subclasses).
+
+PrangeISD, SternISD (etc.) classes: Concrete implementations of ISD algorithms, inheriting from ISDAlgorithm.
+
+Experiment class (or similar): Functions for running experiments:
+
+Generate a random code and error vector.
+
+Run a specified ISD algorithm.
+
+Record success/failure and runtime.
+
+Repeat many times to gather statistics.
+
+Data Structures:
+
+Use efficient data structures (e.g., NumPy arrays for matrices and vectors).
+
+Consider using sparse matrices if appropriate (though for random codes, this might not be beneficial).
+
+Error Handling: Implement appropriate error handling (e.g., what happens if Prange's algorithm fails to find an invertible submatrix?).
+
+Documentation:
+
+Thoroughly document all classes and functions (using docstrings in Python).
+
+Include a README file explaining how to use the library, with examples.
+
+Testing:
+
+Write unit tests to verify the correctness of each function (especially the linear code operations and the decoding algorithms). Test on small, known examples where the correct answer can be calculated by hand.
+
+5. Experimental Evaluation
+
+The library should allow for systematic experiments to compare the performance of the different ISD algorithms. Specify the following:
+
+Metrics:
+
+Success Rate: The percentage of trials in which the algorithm correctly finds the error vector.
+
+Runtime: The average time taken by the algorithm (per decoding attempt). Distinguish between theoretical complexity and actual runtime.
+
+(Optional) Memory Usage: If possible, track the memory used by the algorithms (especially important for Stern's algorithm, which uses lists).
+
+Parameters to Vary:
+
+Code length (n)
+
+Code dimension (k)
+
+Error weight (t or w)
+
+Algorithm-specific parameters (e.g., p and l for Stern's algorithm).
+
+Experimental Procedure:
+
+Fix a set of parameters (n, k, t).
+
+Generate a random linear code (e.g., a random parity-check matrix H).
+
+Generate many random error vectors of weight t.
+
+For each error vector, calculate the syndrome s.
+
+Run the chosen ISD algorithm on (H, s, t).
+
+Record whether the algorithm successfully found the error vector, and the time taken.
+
+Repeat steps 3-6 many times (e.g., 1000 trials) to get statistically significant results.
+
+Repeat steps 1-7 for different parameter sets.
+
+Presentation of Results:
+
+Use tables and plots to clearly present the results. For example, plot success rate vs. runtime for different algorithms and parameters.
+
+Compare the experimental results to the theoretical complexity predictions. Do they match? If not, why not?
+
+6. Deliverables
+
+Well-documented Python code: Organized into modules, with clear class and function definitions. Use meaningful variable names and comments. Follow good coding practices.
+
+README file: Explain how to install and use the library, with examples.
+
+Jupyter Notebook (optional but recommended): Demonstrate the library's functionality with examples and visualizations.
+
+Report: Describe the implemented algorithms, the experimental setup, the results, and your analysis. Include plots and tables. Discuss the limitations of your implementation and potential future work.
+
+7. Potential Extensions (for extra credit or a more ambitious project)
+
+Implement more advanced ISD algorithms: Dumer's, BJMM, or even May-Ozerov (though these are significantly more complex).
+
+Simulate simplified quantum subroutines: Use a quantum simulation library (like Qiskit or Cirq) to simulate Grover's search or a simple quantum walk, and integrate these into your ISD implementations. You won't get a real quantum speedup, but you can demonstrate the principles.
+
+Explore different code families: Instead of random linear codes, experiment with specific code families (e.g., Goppa codes, Reed-Muller codes) and see if the ISD performance changes.
+
+Investigate the impact of code rate: How does the ISD performance change as you vary the ratio k/n?
+
+Parallelize the code: Use Python's multiprocessing or threading capabilities to speed up the experiments (especially the multiple trials).
+
+Implement a version of quantum sieving
+
