@@ -27,8 +27,23 @@ The chart above shows the performance comparison between Prange's algorithm and 
 
 This project includes detailed research on Information Set Decoding algorithms and their implementation:
 
-- [Paper](finalpapercs250.pdf)
-- [Presentation](finalprescs250.pdf)
+<div style="display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px;">
+  <div style="text-align: center; margin: 10px;">
+    <a href="finalpapercs250.pdf">
+      <img src="paperimage.png" alt="Research Paper" width="400"/>
+      <br>
+      <strong>Full Research Paper (PDF)</strong>
+    </a>
+  </div>
+
+  <div style="text-align: center; margin: 10px;">
+    <a href="finalprescs250.pdf">
+      <img src="presimage.png" alt="Presentation" width="400"/>
+      <br>
+      <strong>Presentation Slides (PDF)</strong>
+    </a>
+  </div>
+</div>
 
 These documents provide in-depth analysis of the algorithms' performance, theoretical foundations, and implementation details.
 
