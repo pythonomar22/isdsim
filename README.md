@@ -1,4 +1,4 @@
-isd simulator
+## isd simulator
 
 A Python library for simulating and comparing classical Information Set Decoding (ISD) algorithms for decoding random linear codes.
 
